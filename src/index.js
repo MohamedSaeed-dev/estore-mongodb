@@ -252,7 +252,9 @@ app.delete('/src/deleteProduct', async (req, res) => {
   }
 });
 
-
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'success' });
+})
 app.get('/src/getAllProducts/', async (req, res) => {
   const { id } = req.query;
 
