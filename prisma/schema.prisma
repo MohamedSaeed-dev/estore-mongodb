@@ -9,29 +9,30 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
+
 model Product {
-  Id          Int     @id @default(autoincrement())
-  Name        String  @db.VarChar(100)
-  Quantity    Int
-  Price       Float
-  Img_Url     String  @db.VarChar(100)
-  Description String  @db.VarChar(100)
-  UserId      Int
-  User        User    @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+  Id          String @id @default(auto()) @map("_id") @db.ObjectId
+  Name        String
+  Quantity    String
+  Price       String
+  Img_Url     String
+  Description String
+  UserId      String @db.ObjectId
+  User        User   @relation(fields: [UserId], references: [Id], onDelete: Cascade)
 
   @@index([UserId])
 }
 
 model User {
-  Id       Int     @id @default(autoincrement())
-  Username String  @unique @db.VarChar(50)
-  Email    String  @unique @db.VarChar(50)
-  Phone    String  @db.VarChar(50)
-  Password String  @db.VarChar(150)
+  Id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  Username String
+  Email    String
+  Phone    String
+  Password String
   Products Product[]
 
   @@index([Email], map: "Email")

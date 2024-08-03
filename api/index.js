@@ -22,7 +22,7 @@ app.post('/auth/login', async (req, res) => {
     }
 
     try {
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
             where: {
                 Username: sanitizedUsername,
             },
@@ -71,7 +71,7 @@ app.post('/auth/signup', async (req, res) => {
   }
 
   try {
-    const existingUser = await prisma.user.findUnique({ where: { Username:username } });
+    const existingUser = await prisma.user.findFirst({ where: { Username: username } });
 
     if (existingUser) {
       return res.status(400).json({ status: 'fail', message: 'User already exists' });
@@ -95,12 +95,12 @@ app.post('/auth/signup', async (req, res) => {
 });
 
 function isValidId(id) {
-  return !isNaN(id) && Number.isInteger(parseFloat(id));
+  return isNaN(id);
 }
 
 // Get Account by ID Route
 app.get('/auth/getAccountById', async (req, res) => {
-  const id = parseInt(req.query.id);
+  const id = req.query.id;
 
   if (!isValidId(id)) {
     return res.status(400).json({ status: 'fail', message: 'Invalid ID' });
@@ -119,7 +119,7 @@ app.get('/auth/getAccountById', async (req, res) => {
       res.status(404).json({ status: 'fail', message: 'Account not found' });
     }
   } catch (error) {
-    res.status(500).json({ status: 'fail', message: 'Something went wrong' });
+    res.status(500).json({ status: 'fail', message: `Something went wrong ${error}` });
   }
 });
 
@@ -141,7 +141,7 @@ app.put('/auth/updateAccount', async (req, res) => {
 
   try {
     const account = await prisma.user.findUnique({
-      where: { Id: parseInt(accountId) },
+      where: { Id: accountId },
     });
 
     if (!account) {
@@ -156,7 +156,7 @@ app.put('/auth/updateAccount', async (req, res) => {
       where: {
         AND: [
           { Username: newUsername },
-          { Id: { not: parseInt(accountId) } },
+          { Id: { not: accountId } },
         ],
       },
     });
@@ -180,7 +180,7 @@ app.put('/auth/updateAccount', async (req, res) => {
     }
 
     const updatedAccount = await prisma.user.update({
-      where: { Id: parseInt(accountId) },
+      where: { Id: accountId },
       data: {
         Username: newUsername,
         Email: newEmail,
@@ -212,11 +212,11 @@ app.post('/src/createProduct', async (req, res) => {
     const product = await prisma.product.create({
       data: {
         Name: name,
-        Price: parseFloat(price),
-        Quantity: parseInt(quantity),
+        Price: price,
+        Quantity: quantity,
         Description: description,
         Img_Url: imgUrl,
-        UserId: parseInt(userId),
+        UserId: userId,
       },
     });
 
@@ -235,7 +235,7 @@ app.delete('/src/deleteProduct', async (req, res) => {
 
   try {
     const product = await prisma.product.findUnique({
-      where: { Id: parseInt(id) },
+      where: { Id: id },
     });
 
     if (!product) {
@@ -243,7 +243,7 @@ app.delete('/src/deleteProduct', async (req, res) => {
     }
 
     const deletedProduct = await prisma.product.delete({
-      where: { Id: parseInt(id) },
+      where: { Id: id },
     });
 
     res.status(200).json({ status: 'success', product: deletedProduct });
@@ -264,7 +264,7 @@ app.get('/src/getAllProducts/', async (req, res) => {
 
   try {
     const products = await prisma.product.findMany({
-      where: { UserId: parseInt(id) },
+      where: { UserId: id },
     });
 
     res.status(200).json({ status: 'success', products });
@@ -274,7 +274,7 @@ app.get('/src/getAllProducts/', async (req, res) => {
 });
 
 app.get('/src/getProductById', async (req, res) => {
-    const id = parseInt(req.query.id, 10);
+    const id = (req.query.id);
 
     try {
         const product = await prisma.product.findUnique({
@@ -297,7 +297,7 @@ app.put('/src/updateProduct', async (req, res) => {
     try {
         // Retrieve the existing product details
         const product = await prisma.product.findUnique({
-            where: { Id: parseInt(id) },
+            where: { Id: id },
         });
 
         if (!product) {
@@ -313,7 +313,7 @@ app.put('/src/updateProduct', async (req, res) => {
         const alreadyProduct = await prisma.product.findMany({
             where: {
                 Name: updatedName,
-                Id: { not: parseInt(id) },
+                Id: { not: (id) },
             },
         });
 
@@ -323,11 +323,11 @@ app.put('/src/updateProduct', async (req, res) => {
 
         // Update the product details
         const updatedProduct = await prisma.product.update({
-            where: { Id: parseInt(id) },
+            where: { Id: (id) },
             data: {
                 Name: updatedName,
-                Price: parseFloat(updatedPrice),
-                Quantity: parseInt(updatedQuantity),
+                Price: (updatedPrice),
+                Quantity: (updatedQuantity),
                 Description: description || product.description,
                 Img_Url: imgUrl || product.imgUrl,
             },
