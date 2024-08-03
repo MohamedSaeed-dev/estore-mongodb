@@ -329,7 +329,7 @@ app.put('/src/updateProduct', async (req, res) => {
                 Price: (updatedPrice),
                 Quantity: (updatedQuantity),
                 Description: description || product.description,
-                Img_Url: imgUrl || product.imgUrl,
+                Img_Url: imgUrl,
             },
         });
 
