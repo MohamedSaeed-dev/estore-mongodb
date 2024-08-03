@@ -292,7 +292,7 @@ app.get('/src/getProductById', async (req, res) => {
 });
 
 app.put('/src/updateProduct', async (req, res) => {
-    const { id, name, price, quantity, description, imgUrl } = req.body;
+    const { id, name, price, quantity, description, img_Url } = req.body;
 
     try {
         // Retrieve the existing product details
@@ -329,7 +329,7 @@ app.put('/src/updateProduct', async (req, res) => {
                 Price: (updatedPrice),
                 Quantity: (updatedQuantity),
                 Description: description || product.description,
-                Img_Url: imgUrl,
+                Img_Url: img_Url,
             },
         });
 
